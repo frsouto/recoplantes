@@ -20,3 +20,9 @@ doublon;Tomato___Late_blight;5f21282c-e2ef-4c4a-ace1-b5701fe7effc___GHLB2 Leaf 8
 doublon;Tomato___Late_blight;861d8b00-57a4-46b0-b51a-09d102dbe119___GHLB_PS Leaf 24 Day 13.jpg;doublon
 doublon;Tomato___Late_blight;98586693-fe1f-4ea0-8e27-4501b61cf09b___GHLB_PS Leaf 23.5 Day 13.jpg;doublon
 doublon;Tomato___Late_blight;d6e6897a-5083-4914-9903-804c5684a956___GHLB2 Leaf 102.JPG;doublon
+sharpness;Tomato___Tomato_Yellow_Leaf_Curl_Virus;a5b5d284-5081-4340-9cfa-be58ed74aea3___UF.GRC_YLCV_Lab 02223.JPG;outlier min
+sharpness;Tomato___Tomato_Yellow_Leaf_Curl_Virus;cd37cbce-e141-40a5-8af6-8fa6790c7ed3___UF.GRC_YLCV_Lab 02128.JPG;outlier min
+sharpness;Apple___Apple_scab;f141c7f9-66b7-4052-b5c7-db3df1a894f2___FREC_Scab 3261.JPG;outlier min
+sobel;Cherry_(including_sour)___healthy;4b1fcb7b-3fa6-4bd9-bad0-59328645eef6___JR_HL 4087.JPG;outlier max
+saturation max;Pepper,_bell___healthy;3306b49b-e3b3-4450-8609-ae44ab2b6593___bell-pepper-plant-61726.JPG;saturation max, entropy max, density max
+
