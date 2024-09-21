@@ -49,10 +49,10 @@ class_names = ['Apple___Apple_scab',
  'Tomato___healthy']
 
 # Charger le modèle pré-entraîné
-model = tf.keras.models.load_model('CNNNasNet.keras')
+model = tf.keras.models.load_model('CNNFirstComplet.keras')
 # last_conv_layer_name = 'conv_pw_13_relu'  # Nom de la dernière couche convolutionnelle de votre modèle
 # last_conv_layer_name = 'block7a_expand_activation'
-last_conv_layer_name = 'separable_conv_2_normal_left1_12'
+last_conv_layer_name = 'conv2d_7'
 img_size = (224, 224)
 
 # Fonction pour générer la heatmap Grad-CAM avec intensification
@@ -107,6 +107,17 @@ def explain_with_lime(img_array, model):
 # Interface de l'application
 st.title("Classification d'Image avec Visualisation Interprétable")
 
+# Ajout d'un sélecteur pour choisir le modèle
+model_choice = st.selectbox("Choisissez un modèle à charger :", ["CNN Maison", "Mobilenet1"])
+
+# Charger dynamiquement le modèle basé sur la sélection
+if model_choice == "CNN Maison":
+    model = tf.keras.models.load_model('CNNFirstComplet.keras')
+    last_conv_layer_name = 'conv2d_7'  # Nom de la dernière couche convolutionnelle du modèle 1
+elif model_choice == "Mobilenet1":
+    model = tf.keras.models.load_model('CNNMobilenetv1.keras')
+    last_conv_layer_name = 'conv_pw_13_relu'  # Nom de la dernière couche convolutionnelle du modèle 2
+
 # Ajout d'un sélecteur pour choisir la méthode d'interprétabilité
 option = st.radio(
     "Choisissez la méthode d'interprétabilité que vous souhaitez afficher :",
@@ -126,6 +137,12 @@ if uploaded_file is not None:
     predicted_class_name = class_names[predicted_class_index]
     
     st.write(f"Classe prédite : {predicted_class_name}")
+
+    # Afficher les probabilités d'appartenance aux classes avec probabilité > 0.0001
+    st.write("Probabilités d'appartenance aux classes (supérieures à 0.0001) :")
+    for i, prob in enumerate(predictions[0]):
+        if prob > 0.0001:  # Filtre pour afficher les probabilités supérieures à 0.0001
+            st.write(f"{class_names[i]}: {prob:.4f}")
     
     col1, col2 = st.columns(2)
     
