@@ -1,0 +1,62 @@
+.
+├── arborescence.txt
+├── LICENSE
+├── models
+│   └── CNNFirstComplet.keras
+├── notebooks
+│   ├── 01_exploration
+│   │   ├── 01_exploration_metriques_outliers_visualisation.ipynb
+│   │   ├── 02_exploration_structuration_dataframe_images.ipynb
+│   │   ├── 03_exploration_plantvillage_images_classes.ipynb
+│   │   ├── 04_evaluation_qualite_images_metriques.ipynb
+│   │   └── 05_exploration_images.ipynb
+│   ├── 02_preparation
+│   │   ├── felipe_analyse_doublons_plantdisease_v0.1.ipynb
+│   │   ├── felipe_deplacement_fichiers_plantvillage_v0.2.ipynb
+│   │   ├── files_to_delete.csv
+│   │   └── nicolas_suppression_fichiers_plantvillage_v0.1.ipynb
+│   ├── 03_modelisation
+│   │   ├── 2024-07-11_CNN_training_v1_initial.ipynb
+│   │   ├── 2024-07-16_CNN_training_v2_e20.ipynb
+│   │   ├── 2024-07-17_CNN_training_v3_e20.ipynb
+│   │   ├── 2024-07-22_VGG16_training_v1_e20.ipynb
+│   │   ├── 2024-07-23_MobileNetV1_finetuning_v1_e10.ipynb
+│   │   ├── 2024-07-23_ResNet50_training_v1_e20.ipynb
+│   │   ├── 2024-07-25_MobileNetV2_training_v1_e20.ipynb
+│   │   ├── 2024-08-01_MobileNetV1_training_v1_e20.ipynb
+│   │   ├── 2024-08-26_MobileNetV1_training_v1_e20_analysis.ipynb
+│   │   ├── 2024-08-26_MobileNetV1_training_v2_e20_analysis.ipynb
+│   │   ├── 2024-09-12_NasNetV1_training_v1_e20_analysis.ipynb
+│   │   ├── 2024-09-17_CNNFirst_training_v1_e20_analysis.ipynb
+│   │   ├── 2024-09-22_MobileNetV1_training_v2_e20_analysis.ipynb
+│   │   ├── 2024-09-26_MobileNetV1_training_v3_e20_dropout0.6_lr0.00005_gel_segmentation_analysis.ipynb
+│   │   ├── 2024-09-26_MobileNetV1_training_v3_e20_dropout0.6_lr0.00005_segmentation_analysis.ipynb
+│   │   ├── 2024-09-26_MobileNetV1_training_v3_e20_dropout0.6_segmentation_analysis.ipynb
+│   │   ├── 2024-09-26_MobileNetV1_training_v3_e20_segmentation_analysis.ipynb
+│   │   └── 2024-09-30_ResNet50_training_v1_e20_segmentation_analysis.ipynb
+│   ├── archives
+│   └── Readme.md
+├── README.md
+├── references
+├── reports
+│   └── figures
+│       └── ComparaisonPerformances.png
+├── requirements.txt
+└── src
+    ├── features
+    │   ├── build_features.py
+    │   └── __init__.py
+    ├── __init__.py
+    ├── models
+    │   ├── __init__.py
+    │   ├── predict_model.py
+    │   └── train_model.py
+    ├── streamlit
+    │   ├── app.py
+    │   └── interpretabilite.py
+    └── visualization
+        ├── __init__.py
+        ├── visualisation.py
+        └── visualize.py
+
+14 directories, 45 files

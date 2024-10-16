@@ -1,42 +1,151 @@
+
 import streamlit as st
 from sections import presentation_sujet, presentation_donnees, analyse_donnees, preprocessing, modelisation, meilleur_modele, conclusion, demonstration
+import altair as alt
 
-# Titre principal de l'application
-st.title("Présentation de Machine Learning pour la classification d'images")
+# Configuration de la page : Titre, Favicon et Layout
+st.set_page_config(
+    page_title="Diagnostic des Plantes",
+    page_icon="🌿",
+    layout="centered",
+)
 
-# Sidebar pour la navigation
-st.sidebar.title("Menu de navigation")
-sections = st.sidebar.radio("Choisissez une section", (
-    "Présentation du sujet", 
-    "Présentation des données", 
-    "Analyse des données", 
-    "Préprocessing", 
-    "Modèles entraînés", 
-    "Analyse du meilleur modèle", 
-    "Conclusion",
-    "Démonstration"
-))
+# CSS pour un en-tête fixe, réactif, et un meilleur style général
+st.markdown("""
+    <style>
+    /* En-tête stylisé avec position fixe */
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #3a5f3f;
+        color: white;
+        text-align: center;
+        padding: 0 100px;
+        font-size: clamp(1.2rem, 1.2rem + 1.5vw, 2.5rem);
+        z-index: 100;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 160px;
+    }
+    .header h1 {
+        font-size: clamp(1.5rem, 1.5rem + 0.5vw, 2rem);
+        margin: 0;
+        line-height: 1.2;
+    }
+    .main .block-container {
+        padding-top: 170px;
+        max-width: 1000px;
+        margin: auto;
+    }
+    /* Style pour le pied de page */
+    footer {
+        background-color: #333333;
+        color: #f9f9f9;
+        text-align: center;
+        padding: 20px 0;
+        margin-top: 30px;
+        border-top: 1px solid #ccc;
+    }
+    footer p {
+        margin: 0;
+    }
+    footer a {
+        color: #ffcc00;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    footer a:hover {
+        color: #ff6600;
+        text-decoration: underline;
+    }
+    @media (max-width: 768px) {
+        .header h1 {
+            font-size: 1.5rem;
+        }
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-# Afficher la section choisie
-if sections == "Présentation du sujet":
+# Contenu de l'en-tête
+header = """
+<div class="header">
+    <h1>Maladies des Plantes - Diagnostic rapide grâce au Deep Learning</h1>
+</div>
+"""
+st.markdown(header, unsafe_allow_html=True)
+
+# Sidebar pour la navigation avec des emojis et un style simplifié
+st.sidebar.markdown("## 🌐 Navigation")
+option = st.sidebar.radio(
+    "Choisissez une section :",
+    [
+        "🌱 Présentation du sujet", 
+        "📊 Données", 
+        "🔎 Analyse", 
+        "⚙️ Préprocessing", 
+        "🤖 Modèles", 
+        "🏆 Meilleur modèle", 
+        "📝 Conclusion", 
+        "🚀 Démonstration"
+    ]
+)
+
+# Barre de progression en fonction de l'option sélectionnée
+progress = st.sidebar.progress(0)
+steps = ["Présentation du sujet", "Données", "Analyse", "Préprocessing", "Modèles", "Meilleur modèle", "Conclusion", "Démonstration"]
+step_dict = {name: index for index, name in enumerate(steps)}
+current_step = step_dict[option.split(" ")[1]]
+progress.progress((current_step + 1) / len(steps))
+
+# Contenu principal selon la sélection dans la barre latérale
+if option == "🌱 Présentation du sujet":
     presentation_sujet.display()
-
-elif sections == "Présentation des données":
+elif option == "📊 Données":
     presentation_donnees.display()
-
-elif sections == "Analyse des données":
+elif option == "🔎 Analyse":
     analyse_donnees.display()
-
-elif sections == "Préprocessing":
+elif option == "⚙️ Préprocessing":
     preprocessing.display()
-
-elif sections == "Modèles entraînés":
+elif option == "🤖 Modèles":
     modelisation.display()
-
-elif sections == "Analyse du meilleur modèle":
+elif option == "🏆 Meilleur modèle":
     meilleur_modele.display()
-
-elif sections == "Conclusion":
+elif option == "📝 Conclusion":
     conclusion.display()
-elif sections == "Demonstration":
-    demonstration.display()
+elif option == "🚀 Démonstration":
+    uploaded_image = st.file_uploader("Téléverser une image de feuille", type=["jpg", "png"])
+    if uploaded_image:
+        st.image(uploaded_image, caption="Image téléversée", use_column_width=True)
+        with st.spinner("Chargement du modèle..."):
+            prediction = demonstration.predict(uploaded_image)  # Fonction fictive à définir
+            st.write(f"Maladie prédite : {prediction}")
+            # Ajout de la visualisation GradCAM (exemple simplifié)
+            st.image("path_to_gradcam_image", caption="GradCAM - Explication de la prédiction")
+
+# Footer pour un style plus soigné
+footer = """
+    <style>
+    .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #333333;
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+        color: #f9f9f9;
+        box-shadow: 0 -1px 10px rgba(0,0,0,0.1);
+    }
+    </style>
+    <div class="footer">
+        <p>Projet réalisé par <a href="https://www.linkedin.com/in/tonprofil" target="_blank">Ton Nom</a> | 
+        <a href="https://github.com/tonprofil" target="_blank">GitHub</a> | 
+        <a href="https://linkedin.com/tonprofil" target="_blank">LinkedIn</a></p>
+    </div>
+"""
+st.markdown(footer, unsafe_allow_html=True)
