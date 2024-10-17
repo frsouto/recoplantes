@@ -89,7 +89,7 @@ st.sidebar.markdown("## 🌐 Navigation")
 option = st.sidebar.radio(
     "Choisissez une section :",
     [
-        "🌱 Présentation du sujet", 
+        "🌱 Présentation du projet", 
         "📊 Données", 
         "🔎 Analyse", 
         "⚙️ Préprocessing", 
@@ -103,7 +103,7 @@ option = st.sidebar.radio(
 
 
 # Contenu principal selon la sélection dans la barre latérale
-if option == "🌱 Présentation du sujet":
+if option == "🌱 Présentation du projet":
     presentation_sujet.display()
 elif option == "📊 Données":
     presentation_donnees.display()
