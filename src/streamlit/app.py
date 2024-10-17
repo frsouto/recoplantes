@@ -62,9 +62,13 @@ st.markdown("""
         color: #ff6600;
         text-decoration: underline;
     }
+    /* Réduire la taille du texte sur les petits écrans */
     @media (max-width: 768px) {
         .header h1 {
             font-size: 1.5rem;
+        }
+        .header h3 {
+            font-size: 1rem;
         }
     }
     </style>
@@ -76,6 +80,8 @@ header = """
     <h1>Maladies des Plantes - Diagnostic rapide grâce au Deep Learning</h1>
 </div>
 """
+
+# Injecter l'en-tête dans l'application
 st.markdown(header, unsafe_allow_html=True)
 
 # Sidebar pour la navigation avec des emojis et un style simplifié
@@ -94,12 +100,7 @@ option = st.sidebar.radio(
     ]
 )
 
-# Barre de progression en fonction de l'option sélectionnée
-progress = st.sidebar.progress(0)
-steps = ["Présentation du sujet", "Données", "Analyse", "Préprocessing", "Modèles", "Meilleur modèle", "Conclusion", "Démonstration"]
-step_dict = {name: index for index, name in enumerate(steps)}
-current_step = step_dict[option.split(" ")[1]]
-progress.progress((current_step + 1) / len(steps))
+
 
 # Contenu principal selon la sélection dans la barre latérale
 if option == "🌱 Présentation du sujet":
@@ -120,11 +121,8 @@ elif option == "🚀 Démonstration":
     uploaded_image = st.file_uploader("Téléverser une image de feuille", type=["jpg", "png"])
     if uploaded_image:
         st.image(uploaded_image, caption="Image téléversée", use_column_width=True)
-        with st.spinner("Chargement du modèle..."):
-            prediction = demonstration.predict(uploaded_image)  # Fonction fictive à définir
-            st.write(f"Maladie prédite : {prediction}")
-            # Ajout de la visualisation GradCAM (exemple simplifié)
-            st.image("path_to_gradcam_image", caption="GradCAM - Explication de la prédiction")
+        with st.spinner("Modèle en cours d'exécution..."):
+            demonstration.display(uploaded_image)
 
 # Footer pour un style plus soigné
 footer = """
