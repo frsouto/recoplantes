@@ -37,7 +37,7 @@ st.markdown("""
         line-height: 1.2;
     }
     .main .block-container {
-        padding-top: 170px;
+        padding-top: 130px;
         max-width: 1200px;
         padding-left: 2%;
         padding-right: 2%;
