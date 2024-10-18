@@ -8,10 +8,9 @@ def display():
     # Introduction et contexte
     st.markdown("""
     ### Problématique :
-    Les maladies des plantes représentent un défi majeur pour l'agriculture moderne. En raison de l'importance économique de l'agriculture
-    et des menaces pesant sur la sécurité alimentaire mondiale, il devient crucial d'améliorer les méthodes de diagnostic. Les méthodes
-    traditionnelles reposent principalement sur des inspections manuelles longues, coûteuses et nécessitant une expertise pointue. Cela limite 
-    la capacité des agriculteurs à réagir rapidement face aux maladies qui affectent les cultures.
+    - **Problème majeur** : Maladies des plantes = menace pour l'agriculture moderne.
+    - **Impact global** : Sécurité alimentaire  en jeu.
+    - **Limites actuelles** : Méthodes manuelles, coûteuses, et lentes.
     """)
 
     # Organisation du contenu en colonnes pour plus de compacité
