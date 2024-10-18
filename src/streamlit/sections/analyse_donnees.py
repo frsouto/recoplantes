@@ -23,7 +23,7 @@ def display():
     choice = st.selectbox("Choisissez une métrique à visualiser :", list(options.keys()))
 
     # Organisation du contenu avec des colonnes (image à gauche, texte à droite)
-    col1, col2 = st.columns([1, 2])  # Ajuster la taille des colonnes, col1 pour l'image, col2 pour le texte
+    col1, col2 = st.columns([2, 3])  # Ajuster la taille des colonnes, col1 pour l'image, col2 pour le texte
 
     # Afficher l'image dans la première colonne
     with col1:
