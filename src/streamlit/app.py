@@ -1,16 +1,25 @@
 
 import streamlit as st
-from sections import presentation_sujet, presentation_donnees, analyse_donnees, preprocessing, modelisation, meilleur_modele, conclusion, demonstration
+from sections import (
+    presentation, 
+    data_overview, 
+    exploratory_analysis, 
+    preprocessing, 
+    modeling, 
+    best_model, 
+    conclusion, 
+    demo
+)
 import altair as alt
 
 # Configuration de la page : Titre, Favicon et Layout
 st.set_page_config(
-    page_title="Diagnostic des Plantes",
+    page_title="Reconnaissance de plantes",
     page_icon="🌿",
     layout="centered",
 )
 
-# CSS pour un en-tête fixe, réactif, et un meilleur style général
+# CSS pour le style (amélioration des couleurs et du design général)
 st.markdown("""
     <style>
     /* En-tête stylisé avec position fixe */
@@ -19,7 +28,7 @@ st.markdown("""
         top: 0;
         left: 0;
         width: 100%;
-        background-color: #3a5f3f;
+        background-color: #4A7C59;
         color: white;
         text-align: center;
         padding: 0 100px;
@@ -41,10 +50,11 @@ st.markdown("""
         max-width: 1200px;
         padding-left: 2%;
         padding-right: 2%;
+        color: #333333;
     }
-    /* Style pour le pied de page */
+    /* Amélioration de la lisibilité et contrastes dans le footer */
     footer {
-        background-color: #333333;
+        background-color: #222;
         color: #f9f9f9;
         text-align: center;
         padding: 20px 0;
@@ -72,60 +82,66 @@ st.markdown("""
             font-size: 1rem;
         }
     }
+    /* Personnalisation des boutons */
+    .stButton button {
+        background-color: #4A7C59;
+        color: white;
+        border-radius: 12px;
+        padding: 0.5rem 1rem;
+    }
+    .stButton button:hover {
+        background-color: #3c6246;
+        transition: background-color 0.3s ease;
+    }
     </style>
 """, unsafe_allow_html=True)
 
 # Contenu de l'en-tête
 header = """
 <div class="header">
-    <h1>Maladies des Plantes - Diagnostic rapide grâce au Deep Learning</h1>
+    <h1>Reconnaissance de plantes - Détection des maladies</h1>
 </div>
 """
-
-# Injecter l'en-tête dans l'application
 st.markdown(header, unsafe_allow_html=True)
 
 # Sidebar pour la navigation avec des emojis et un style simplifié
-st.sidebar.markdown("## 🌐 Navigation")
-option = st.sidebar.radio(
-    "Choisissez une section :",
-    [
-        "🌱 Présentation du projet", 
-        "📊 Données", 
-        "🔎 Analyse", 
-        "⚙️ Préprocessing", 
-        "🤖 Modèles", 
-        "🏆 Meilleur modèle", 
-        "📝 Conclusion", 
-        "🚀 Démonstration"
-    ]
-)
+st.sidebar.title("## 🌐Navigation")
+page = st.sidebar.radio("Aller à", [
+    "🏠 Accueil",  # Home
+    "📄 Présentation",  # Presentation (document icon)
+    "📊 Données",  # Data (chart icon)
+    "🔍 Analyse exploratoire",  # Exploratory Analysis (magnifying glass icon)
+    "⚙️ Preprocessing",  # Preprocessing (gear icon)
+    "🤖 Modélisation",  # Modeling (robot icon)
+    "🏆 Meilleur modèle",  # Best Model (trophy icon)
+    "📜 Conclusion",  # Conclusion (scroll icon)
+    "🚀 Démonstration"  # Demo (rocket icon)
+])
 
 
 
-# Contenu principal selon la sélection dans la barre latérale
-if option == "🌱 Présentation du projet":
-    presentation_sujet.display()
-elif option == "📊 Données":
-    presentation_donnees.display()
-elif option == "🔎 Analyse":
-    analyse_donnees.display()
-elif option == "⚙️ Préprocessing":
+if page == "🏠 Accueil":
+    st.title("Reconnaissance de plantes - Détection des maladies")
+    st.subheader("DataScientest - Promotion Février 2024")
+    st.write("Par Felipe Souto et Nicolas Papegaey")
+elif page == "📄 Présentation":
+    presentation.display()
+elif page == "📊 Données":
+    data_overview.display()
+elif page == "🔍 Analyse exploratoire":
+    exploratory_analysis.display()
+elif page == "⚙️ Preprocessing":
     preprocessing.display()
-elif option == "🤖 Modèles":
-    modelisation.display()
-elif option == "🏆 Meilleur modèle":
-    meilleur_modele.display()
-elif option == "📝 Conclusion":
+elif page == "🤖 Modélisation":
+    modeling.display()
+elif page == "🏆 Meilleur modèle":
+    best_model.display()
+elif page == "📜 Conclusion":
     conclusion.display()
-elif option == "🚀 Démonstration":
-    uploaded_image = st.file_uploader("Téléverser une image de feuille", type=["jpg", "png"])
-    if uploaded_image:
-        st.image(uploaded_image, caption="Image téléversée", use_column_width=True)
-        with st.spinner("Modèle en cours d'exécution..."):
-            demonstration.display(uploaded_image)
+elif page == "🚀 Démonstration":
+    demo.display()
 
-# Footer pour un style plus soigné
+# Footer
 footer = """
     <style>
     .footer {
@@ -133,7 +149,7 @@ footer = """
         bottom: 0;
         left: 0;
         right: 0;
-        background-color: #333333;
+        background-color: #222;
         text-align: center;
         padding: 10px;
         font-size: 14px;
@@ -142,9 +158,7 @@ footer = """
     }
     </style>
     <div class="footer">
-        <p>Projet réalisé par <a href="https://www.linkedin.com/in/tonprofil" target="_blank">Ton Nom</a> | 
-        <a href="https://github.com/tonprofil" target="_blank">GitHub</a> | 
-        <a href="https://linkedin.com/tonprofil" target="_blank">LinkedIn</a></p>
+        <p>Projet réalisé par Felipe Souto et Nicolas Papegaey | DataScientest - Promotion Février 2024</p>
     </div>
 """
 st.markdown(footer, unsafe_allow_html=True)
