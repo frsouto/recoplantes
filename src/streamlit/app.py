@@ -11,6 +11,8 @@ from sections import (
 )
 import altair as alt
 
+
+
 # Configuration de la page : Titre, Favicon et Layout
 st.set_page_config(
     page_title="Reconnaissance de plantes",

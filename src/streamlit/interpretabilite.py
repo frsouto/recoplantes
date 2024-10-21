@@ -40,8 +40,8 @@ st.markdown("""
     .main .block-container {
         padding-top: 130px;
         max-width: 1200px;
-        padding-left: 0.2rem;  /* Ajuster la marge gauche ici */
-        padding-right: 0.2rem; /* Ajuster la marge droite ici 
+        padding-left: 1rem;  /* Ajuster la marge gauche ici */
+        padding-right: 1rem; /* Ajuster la marge droite ici 
         color: #333333;
     }
     /* Amélioration de la lisibilité et contrastes dans le footer */
@@ -215,44 +215,61 @@ with col_results:
     if uploaded_file is not None:
         img = Image.open(uploaded_file)
         img = img.resize(img_size)
-        
+        st.image(img, caption='Image originale', use_column_width=True)
         img_array = image.img_to_array(img)
         img_array = np.expand_dims(img_array, axis=0) / 255.0
-        
-        start_time = time.time()
-        predictions = model.predict(img_array)
-        end_time = time.time()
-        
-        predicted_class_index = tf.argmax(predictions[0])
-        predicted_class_name = class_names[predicted_class_index.numpy()]
-        
-        st.subheader("Résultats de la Classification")
-        st.write(f"**Classe prédite :** {predicted_class_name}")
-        st.write(f"**Temps de prédiction :** {end_time - start_time:.2f} secondes")
+        if st.button("Suivant - Lancer la Prédiction", key='next_prediction'):
+            start_time = time.time()
+            predictions = model.predict(img_array)
+            end_time = time.time()
 
-        # Affichage du graphique des probabilités des classes les plus probables
-        st.subheader("Top 5 des probabilités de classification")
-        top_5_indices = np.argsort(predictions[0])[-5:][::-1]
-        top_5_probs = [predictions[0][i] for i in top_5_indices]
-        top_5_class_names = [class_names[i] for i in top_5_indices]
+            predicted_class_index = tf.argmax(predictions[0])
+            predicted_class_name = class_names[predicted_class_index.numpy()]
 
-        
+            st.subheader("Résultats de la Classification")
+            st.write(f"**Classe prédite :** {predicted_class_name}")
+            st.write(f"**Temps de prédiction :** {end_time - start_time:.2f} secondes")
 
-        fig = go.Figure()
-        fig.add_trace(go.Bar(x=top_5_probs, y=top_5_class_names, orientation='h', marker=dict(color='skyblue')))
-        
-        fig.update_layout(xaxis_title='Probabilité')
-        fig.update_layout(title='Top 5 des classes prédites', yaxis=dict(autorange='reversed'))
-        st.plotly_chart(fig)
+            # Affichage du graphique des probabilités des classes les plus probables
+            st.subheader("Top 5 des probabilités de classification")
+            top_5_indices = np.argsort(predictions[0])[-5:][::-1]
+            top_5_probs = [predictions[0][i] for i in top_5_indices]
+            top_5_class_names = [class_names[i] for i in top_5_indices]
+
+            fig = go.Figure()
+            fig.add_trace(go.Bar(x=top_5_probs, y=top_5_class_names, orientation='h', marker=dict(color='skyblue')))
+            fig.update_layout(xaxis_title='Probabilité')
+            fig.update_layout(title='Top 5 des classes prédites', yaxis=dict(autorange='reversed'))
+            st.plotly_chart(fig)
+            img_array = image.img_to_array(img)
+            img_array = np.expand_dims(img_array, axis=0) / 255.0
+
+            start_time = time.time()
+            predictions = model.predict(img_array)
+            end_time = time.time()
+
+            predicted_class_index = tf.argmax(predictions[0])
+            predicted_class_name = class_names[predicted_class_index.numpy()]
+
+            st.subheader("Résultats de la Classification")
+            st.write(f"**Classe prédite :** {predicted_class_name}")
+            st.write(f"**Temps de prédiction :** {end_time - start_time:.2f} secondes")
+
+            # Affichage du graphique des probabilités des classes les plus probables
+            st.subheader("Top 5 des probabilités de classification")
+            top_5_indices = np.argsort(predictions[0])[-5:][::-1]
+            top_5_probs = [predictions[0][i] for i in top_5_indices]
+            top_5_class_names = [class_names[i] for i in top_5_indices]
+
+            fig = go.Figure()
+            fig.add_trace(go.Bar(x=top_5_probs, y=top_5_class_names, orientation='h', marker=dict(color='skyblue')))
+            fig.update_layout(xaxis_title='Probabilité')
+            fig.update_layout(title='Top 5 des classes prédites', yaxis=dict(autorange='reversed'))
+            st.plotly_chart(fig)
 
 with col_interpretability:
-    if uploaded_file is not None:
+    if uploaded_file is not None and option is not None and 'predicted_class_name' in locals():
         st.subheader("Interprétabilité")
-        st.image(img, caption='Image originale', use_column_width=True)
-
-        gradcam_image = None
-        lime_img = None
-
         if option == 'Grad-CAM':
             # Générer la heatmap Grad-CAM
             heatmap = make_gradcam_heatmap(img_array, model, last_conv_layer_name, intensity=3)
@@ -264,9 +281,14 @@ with col_interpretability:
             st.image(lime_img, caption=f'Explication LIME pour {predicted_class_name}', use_column_width=True)
         
         # Libérer la mémoire après toutes les opérations
-        del img, img_array, predictions
-        if gradcam_image is not None:
+        if 'img' in locals():
+            del img
+        if 'img_array' in locals():
+            del img_array
+        if 'predictions' in locals():
+            del predictions
+        if 'gradcam_image' in locals():
             del gradcam_image
-        if lime_img is not None:
+        if 'lime_img' in locals():
             del lime_img
         gc.collect()
