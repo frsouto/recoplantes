@@ -1,4 +1,3 @@
-
 import streamlit as st
 from sections import (
     presentation, 
@@ -17,6 +16,7 @@ st.set_page_config(
     page_title="Reconnaissance de plantes",
     page_icon="🌿",
     layout="centered",
+    initial_sidebar_state='expanded'
 )
 
 # CSS pour le style (amélioration des couleurs et du design général)
@@ -97,55 +97,38 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Contenu de l'en-tête
-header = """
-<div class="header">
-    <h1>Reconnaissance de plantes - Détection des maladies</h1>
-</div>
-"""
-st.markdown(header, unsafe_allow_html=True)
+st.header("Reconnaissance de plantes - Détection des maladies")
 
 # Sidebar pour la navigation avec des emojis et un style simplifié
 st.sidebar.title("## 🌐Navigation")
-page = st.sidebar.radio("Aller à", [
-    "🏠 Accueil",  # Home
-    "📄 Présentation",  # Presentation (document icon)
-    "📊 Données",  # Data (chart icon)
-    "🔍 Analyse exploratoire",  # Exploratory Analysis (magnifying glass icon)
-    "⚙️ Preprocessing",  # Preprocessing (gear icon)
-    "🤖 Modélisation",  # Modeling (robot icon)
-    "🏆 Meilleur modèle",  # Best Model (trophy icon)
-    "📜 Conclusion",  # Conclusion (scroll icon)
-    "🚀 Démonstration"  # Demo (rocket icon)
-])
 
+# Dictionnaire pour mapper les pages aux fonctions correspondantes
+pages = {
+    "🏰 Accueil": lambda: (st.title("Reconnaissance de plantes - Détection des maladies"),
+                          st.subheader("DataScientest - Promotion Février 2024"),
+                          st.write("Par Felipe Souto et Nicolas Papegaey")),
+    "📄 Présentation": presentation.display,
+    "📊 Données": data_overview.display,
+    "🔍 Analyse exploratoire": exploratory_analysis.display,
+    "⚙️ Preprocessing": preprocessing.display,
+    "🤖 Modélisation": modeling.display,
+    "🏆 Meilleur modèle": best_model.display,
+    "📜 Conclusion": conclusion.display,
+    "🚀 Démonstration": demo.display
+}
 
+# Navigation par le menu latéral
+page = st.sidebar.radio("Aller à", list(pages.keys()))
 
-if page == "🏠 Accueil":
-    st.title("Reconnaissance de plantes - Détection des maladies")
-    st.subheader("DataScientest - Promotion Février 2024")
-    st.write("Par Felipe Souto et Nicolas Papegaey")
-elif page == "📄 Présentation":
-    presentation.display()
-elif page == "📊 Données":
-    data_overview.display()
-elif page == "🔍 Analyse exploratoire":
-    exploratory_analysis.display()
-elif page == "⚙️ Preprocessing":
-    preprocessing.display()
-elif page == "🤖 Modélisation":
-    modeling.display()
-elif page == "🏆 Meilleur modèle":
-    best_model.display()
-elif page == "📜 Conclusion":
-    conclusion.display()
-elif page == "🚀 Démonstration":
-    demo.display()
+# Affichage de la page sélectionnée
+if page in pages:
+    pages[page]()
 
 # Footer
 footer = """
     <style>
     .footer {
-        position: fixed;
+        position: relative;
         bottom: 0;
         left: 0;
         right: 0;
@@ -155,6 +138,7 @@ footer = """
         font-size: 14px;
         color: #f9f9f9;
         box-shadow: 0 -1px 10px rgba(0,0,0,0.1);
+        margin-top: 20px;
     }
     </style>
     <div class="footer">
