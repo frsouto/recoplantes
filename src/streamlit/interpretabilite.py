@@ -7,6 +7,7 @@ from PIL import Image
 import lime
 from lime import lime_image
 from skimage.segmentation import mark_boundaries
+import plotly.graph_objects as go
 import time
 import gc
 
@@ -39,8 +40,8 @@ st.markdown("""
     .main .block-container {
         padding-top: 130px;
         max-width: 1200px;
-        padding-left: 1rem;  /* Ajuster la marge gauche ici */
-        padding-right: 1rem; /* Ajuster la marge droite ici 
+        padding-left: 0.2rem;  /* Ajuster la marge gauche ici */
+        padding-right: 0.2rem; /* Ajuster la marge droite ici 
         color: #333333;
     }
     /* Amélioration de la lisibilité et contrastes dans le footer */
@@ -132,7 +133,7 @@ class_names = ['Apple___Apple_scab',
 def load_model(model_name):
     return tf.keras.models.load_model(model_name)
 
-model = load_model('CNNMobilenetv1.keras')
+model = load_model('models/CNNMobilenetv1.keras')
 last_conv_layer_name = 'conv_pw_13_relu'  # Nom de la dernière couche convolutionnelle de votre modèle
 img_size = (224, 224)
 
@@ -197,10 +198,10 @@ with col_actions:
 
     # Charger dynamiquement le modèle basé sur la sélection
     if model_choice == "CNN Maison":
-        model = load_model('CNNFirstComplet.keras')
+        model = load_model('models/CNNFirstComplet.keras')
         last_conv_layer_name = 'conv2d_7'  # Nom de la dernière couche convolutionnelle du modèle 1
     elif model_choice == "Mobilenet1":
-        model = load_model('CNNMobilenetv1.keras')
+        model = load_model('models/CNNMobilenetv1.keras')
         last_conv_layer_name = 'conv_pw_13_relu'  # Nom de la dernière couche convolutionnelle du modèle 2
 
     # Ajout d'un sélecteur pour choisir la méthode d'interprétabilité
@@ -235,12 +236,14 @@ with col_results:
         top_5_probs = [predictions[0][i] for i in top_5_indices]
         top_5_class_names = [class_names[i] for i in top_5_indices]
 
-        fig, ax = plt.subplots()
-        ax.barh(top_5_class_names, top_5_probs, color='skyblue')
-        ax.invert_yaxis()
-        ax.set_xlabel('Probabilité')
-        ax.set_title('Top 5 des classes prédites')
-        st.pyplot(fig)
+        
+
+        fig = go.Figure()
+        fig.add_trace(go.Bar(x=top_5_probs, y=top_5_class_names, orientation='h', marker=dict(color='skyblue')))
+        
+        fig.update_layout(xaxis_title='Probabilité')
+        fig.update_layout(title='Top 5 des classes prédites', yaxis=dict(autorange='reversed'))
+        st.plotly_chart(fig)
 
 with col_interpretability:
     if uploaded_file is not None:

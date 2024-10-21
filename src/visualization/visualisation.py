@@ -5,7 +5,7 @@ from dash import dcc, html, Input, Output
 import base64
 
 # Charger le dataframe
-df = pd.read_csv('metriques2.csv')
+df = pd.read_csv('../../reports/metriques2.csv')
 
 # Ajouter une colonne d'identifiant unique
 df['id'] = df.index
