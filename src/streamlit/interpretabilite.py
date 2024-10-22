@@ -159,8 +159,8 @@ def make_gradcam_heatmap(img_array, model, last_conv_layer_name, pred_index=None
     return heatmap.numpy()
 
 # Fonction pour superposer la heatmap Grad-CAM sur l'image originale
-def overlay_gradcam(img_path, heatmap, alpha=0.3):
-    img = Image.open(img_path)
+def overlay_gradcam(img, heatmap, alpha=0.3):
+    # img is already an Image object, no need to open it again
     img = img.resize(img_size)
     img_array = np.array(img)
 
@@ -213,8 +213,39 @@ with col_actions:
 
 with col_results:
     if uploaded_file is not None:
+        st.subheader("Image")
         img = Image.open(uploaded_file)
         img = img.resize(img_size)
+        
+        # Regrouper les ajustements dans un expander
+        with st.expander("Ajustements de l'image"):
+            # Ajout d'un slider pour ajuster la luminosité
+            brightness = st.slider("Ajuster la luminosité", 0.5, 2.0, 1.0, key='brightness_slider_unique')
+
+            # Appliquer la luminosité sélectionnée par l'utilisateur
+            from PIL import ImageEnhance
+            img = ImageEnhance.Brightness(img).enhance(brightness)
+
+            # Ajout d'un slider pour ajuster le flou gaussien
+            blur_intensity = st.slider("Ajuster l'intensité du flou", 0, 5, 0, key='blur_slider_unique')
+
+            # Fonction pour appliquer le flou gaussien
+            from PIL import ImageFilter
+            if blur_intensity > 0:
+                img = img.filter(ImageFilter.GaussianBlur(blur_intensity))
+
+            # Ajout d'un slider pour faire pivoter l'image
+            rotation_angle = st.slider("Faire pivoter l'image", 0, 360, 0, key='rotation_slider')
+
+            # Appliquer la rotation de l'image
+            img = img.rotate(rotation_angle, expand=True)
+            # Redimensionner l'image après la rotation
+            img = img.resize(img_size)
+        
+        
+        # Appliquer la luminosité sélectionnée par l'utilisateur
+        from PIL import ImageEnhance
+        img = ImageEnhance.Brightness(img).enhance(brightness)
         st.image(img, caption='Image originale', use_column_width=True)
         img_array = image.img_to_array(img)
         img_array = np.expand_dims(img_array, axis=0) / 255.0
@@ -244,28 +275,7 @@ with col_results:
             img_array = image.img_to_array(img)
             img_array = np.expand_dims(img_array, axis=0) / 255.0
 
-            start_time = time.time()
-            predictions = model.predict(img_array)
-            end_time = time.time()
-
-            predicted_class_index = tf.argmax(predictions[0])
-            predicted_class_name = class_names[predicted_class_index.numpy()]
-
-            st.subheader("Résultats de la Classification")
-            st.write(f"**Classe prédite :** {predicted_class_name}")
-            st.write(f"**Temps de prédiction :** {end_time - start_time:.2f} secondes")
-
-            # Affichage du graphique des probabilités des classes les plus probables
-            st.subheader("Top 5 des probabilités de classification")
-            top_5_indices = np.argsort(predictions[0])[-5:][::-1]
-            top_5_probs = [predictions[0][i] for i in top_5_indices]
-            top_5_class_names = [class_names[i] for i in top_5_indices]
-
-            fig = go.Figure()
-            fig.add_trace(go.Bar(x=top_5_probs, y=top_5_class_names, orientation='h', marker=dict(color='skyblue')))
-            fig.update_layout(xaxis_title='Probabilité')
-            fig.update_layout(title='Top 5 des classes prédites', yaxis=dict(autorange='reversed'))
-            st.plotly_chart(fig)
+            
 
 with col_interpretability:
     if uploaded_file is not None and option is not None and 'predicted_class_name' in locals():
@@ -273,7 +283,7 @@ with col_interpretability:
         if option == 'Grad-CAM':
             # Générer la heatmap Grad-CAM
             heatmap = make_gradcam_heatmap(img_array, model, last_conv_layer_name, intensity=3)
-            gradcam_image = overlay_gradcam(uploaded_file, heatmap, alpha=0.7)
+            gradcam_image = overlay_gradcam(img, heatmap, alpha=0.7)
             st.image(gradcam_image, caption=f'Image Grad-CAM pour {predicted_class_name}', use_column_width=True)
         elif option == 'LIME':
             # Générer l'explication LIME
@@ -292,3 +302,6 @@ with col_interpretability:
         if 'lime_img' in locals():
             del lime_img
         gc.collect()
+
+
+
