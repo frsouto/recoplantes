@@ -10,123 +10,16 @@ from skimage.segmentation import mark_boundaries
 import plotly.graph_objects as go
 import time
 import gc
+from utils.classes import class_names
 
-# CSS pour le style (amélioration des couleurs et du design général)
-st.markdown("""
-    <style>
-    /* En-tête stylisé avec position fixe */
-    .header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        background-color: #4A7C59;
-        color: white;
-        text-align: center;
-        padding: 0 100px;
-        font-size: clamp(1.2rem, 1.2rem + 1.5vw, 2.5rem);
-        z-index: 100;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 160px;
-    }
-    .header h1 {
-        font-size: clamp(1.5rem, 1.5rem + 0.5vw, 2rem);
-        margin: 0;
-        line-height: 1.2;
-    }
-    .main .block-container {
-        padding-top: 130px;
-        max-width: 1200px;
-        padding-left: 1rem;  /* Ajuster la marge gauche ici */
-        padding-right: 1rem; /* Ajuster la marge droite ici 
-        color: #333333;
-    }
-    /* Amélioration de la lisibilité et contrastes dans le footer */
-    footer {
-        background-color: #222;
-        color: #f9f9f9;
-        text-align: center;
-        padding: 20px 0;
-        margin-top: 30px;
-        border-top: 1px solid #ccc;
-    }
-    footer p {
-        margin: 0;
-    }
-    footer a {
-        color: #ffcc00;
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
-    footer a:hover {
-        color: #ff6600;
-        text-decoration: underline;
-    }
-    /* Réduire la taille du texte sur les petits écrans */
-    @media (max-width: 768px) {
-        .header h1 {
-            font-size: 1.5rem;
-        }
-        .header h3 {
-            font-size: 1rem;
-        }
-    }
-    /* Personnalisation des boutons */
-    .stButton button {
-        background-color: #4A7C59;
-        color: white;
-        border-radius: 12px;
-        padding: 0.5rem 1rem;
-    }
-    .stButton button:hover {
-        background-color: #3c6246;
-        transition: background-color 0.3s ease;
-    }
-    </style>
-""", unsafe_allow_html=True)
+# Lire le fichier CSS et l'inclure dans le markdown
+def load_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-# Liste des classes
-class_names = ['Apple___Apple_scab',
- 'Apple___Black_rot',
- 'Apple___Cedar_apple_rust',
- 'Apple___healthy',
- 'Blueberry___healthy',
- 'Cherry_(including_sour)___Powdery_mildew',
- 'Cherry_(including_sour)___healthy',
- 'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot',
- 'Corn_(maize)___Common_rust_',
- 'Corn_(maize)___Northern_Leaf_Blight',
- 'Corn_(maize)___healthy',
- 'Grape___Black_rot',
- 'Grape___Esca_(Black_Measles)',
- 'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)',
- 'Grape___healthy',
- 'Orange___Haunglongbing_(Citrus_greening)',
- 'Peach___Bacterial_spot',
- 'Peach___healthy',
- 'Pepper,_bell___Bacterial_spot',
- 'Pepper,_bell___healthy',
- 'Potato___Early_blight',
- 'Potato___Late_blight',
- 'Potato___healthy',
- 'Raspberry___healthy',
- 'Soybean___healthy',
- 'Squash___Powdery_mildew',
- 'Strawberry___Leaf_scorch',
- 'Strawberry___healthy',
- 'Tomato___Bacterial_spot',
- 'Tomato___Early_blight',
- 'Tomato___Late_blight',
- 'Tomato___Leaf_Mold',
- 'Tomato___Septoria_leaf_spot',
- 'Tomato___Spider_mites Two-spotted_spider_mite',
- 'Tomato___Target_Spot',
- 'Tomato___Tomato_Yellow_Leaf_Curl_Virus',
- 'Tomato___Tomato_mosaic_virus',
- 'Tomato___healthy']
+# Charger le fichier CSS
+load_css("utils/styles.css")
+
 
 # Charger le modèle pré-entraîné
 @st.cache_resource
