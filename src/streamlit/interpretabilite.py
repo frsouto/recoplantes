@@ -38,6 +38,18 @@ def make_gradcam_heatmap(img_array, model, last_conv_layer_name, pred_index=None
         conv_outputs, predictions = grad_model(img_array)
         if pred_index is None:
             pred_index = tf.argmax(predictions[0])  # Avoid using .numpy() to maintain compatibility with TF operations
+        # class_channel = predictions[0][pred_index]
+        # Convertir en valeur scalaire, avec une vérification pour gérer les tableaux
+        pred_index = pred_index.numpy()  # Convertir le tenseur en un tableau NumPy
+
+        # Si `pred_index` est un tableau, prendre la première valeur s'il a plusieurs éléments
+        if isinstance(pred_index, np.ndarray):
+            if pred_index.size == 1:  # Si c'est un tableau de taille 1
+                pred_index = pred_index.item()  # Extraire la valeur scalaire
+            else:
+                pred_index = pred_index[0]  # Utiliser le premier élément si plusieurs indices sont présents
+
+        # Utiliser `pred_index` pour accéder à la bonne classe prédite
         class_channel = predictions[0][pred_index]
     
     grads = tape.gradient(class_channel, conv_outputs)
