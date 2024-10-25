@@ -15,12 +15,16 @@
     align-items: center;
     justify-content: center;
     height: 160px;
+    transition: height 0.3s ease; /* Ajout de la transition pour l'effet smooth */
 }
+
 .header h1 {
     font-size: clamp(1.5rem, 1.5rem + 0.5vw, 2rem);
     margin: 0;
     line-height: 1.2;
 }
+
+/* Ajustement du conteneur principal */
 .main .block-container {
     padding-top: 130px;
     max-width: 1200px;
@@ -28,6 +32,8 @@
     padding-right: 1rem;
     color: #333333;
 }
+
+/* Footer stylisé */
 footer {
     background-color: #222;
     color: #f9f9f9;
@@ -36,33 +42,80 @@ footer {
     margin-top: 30px;
     border-top: 1px solid #ccc;
 }
+
 footer p {
     margin: 0;
 }
+
 footer a {
     color: #ffcc00;
     text-decoration: none;
     transition: color 0.3s ease;
 }
+
 footer a:hover {
     color: #ff6600;
     text-decoration: underline;
 }
-@media (max-width: 768px) {
-    .header h1 {
-        font-size: 1.5rem;
-    }
-    .header h3 {
-        font-size: 1rem;
-    }
-}
+
+/* Style des boutons */
 .stButton button {
     background-color: #4A7C59;
     color: white;
     border-radius: 12px;
     padding: 0.5rem 1rem;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
 }
+
 .stButton button:hover {
     background-color: #3c6246;
-    transition: background-color 0.3s ease;
+    transform: translateY(-2px);  /* Ajout d'un effet de translation au survol */
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ---------------- Responsive Design ---------------- */
+
+/* Ajustement pour petits écrans (moins de 768px) */
+@media (max-width: 768px) {
+    .header {
+        height: 120px;
+        padding: 0 50px;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .main .block-container {
+        padding-top: 80px;  /* Réduction de l'espace en haut */
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .stButton button {
+        padding: 0.4rem 0.8rem;  /* Réduction des boutons pour petits écrans */
+    }
+}
+
+/* Ajustement pour très petits écrans (moins de 480px) */
+@media (max-width: 480px) {
+    .header {
+        height: 100px;  /* Hauteur réduite de l'en-tête pour les très petits écrans */
+        padding: 0 20px;
+    }
+
+    .header h1 {
+        font-size: 1.2rem;
+    }
+
+    .main .block-container {
+        padding-top: 60px;  /* Réduction encore plus grande pour les petits écrans */
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .stButton button {
+        padding: 0.3rem 0.6rem;  /* Boutons plus petits mais toujours cliquables */
+    }
 }
