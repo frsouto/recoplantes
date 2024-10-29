@@ -26,7 +26,7 @@ load_css("utils/styles.css")
 def load_model(model_name):
     return tf.keras.models.load_model(model_name)
 
-model = load_model('models/MobileNetV1_pretrained.keras')
+model = load_model('models/MobileNetV1_finetuned.keras')
 last_conv_layer_name = 'conv_pw_13_relu'  # Nom de la dernière couche convolutionnelle de votre modèle
 img_size = (224, 224)
 
@@ -99,17 +99,17 @@ col_actions, col_results, col_interpretability = st.columns([1, 2, 2])
 
 with col_actions:
     # Ajout d'un sélecteur pour choisir le modèle
-    model_choice = st.selectbox("Choisissez un modèle à charger :", ["CNN Maison", "Mobilenet1","Mobilenet1FineTuned"], index=1)
+    model_choice = st.selectbox("Choisissez un modèle à charger :", ["CNN Maison", "Mobilenet1FineTuned","Mobilenet1Augmented"], index=1)
 
     # Charger dynamiquement le modèle basé sur la sélection
     if model_choice == "CNN Maison":
         model = load_model('models/CNNFirstComplet.keras')
         last_conv_layer_name = 'conv2d_7'  # Nom de la dernière couche convolutionnelle du modèle 1
-    elif model_choice == "Mobilenet1":
-        model = load_model('models/MobileNetV1_pretrained.keras')
-        last_conv_layer_name = 'conv_pw_13_relu'  # Nom de la dernière couche convolutionnelle du modèle 2
     elif model_choice == "Mobilenet1FineTuned":
         model = load_model('models/MobileNetV1_finetuned.keras')
+        last_conv_layer_name = 'conv_pw_13_relu'  # Nom de la dernière couche convolutionnelle du modèle 2
+    elif model_choice == "Mobilenet1Augmented":
+        model = load_model('models/MobileNetV1_augmented.keras')
         last_conv_layer_name = 'conv_pw_13_relu'  # Nom de la dernière couche convolutionnelle du modèle 2
 
     # Ajout d'un sélecteur pour choisir la méthode d'interprétabilité
