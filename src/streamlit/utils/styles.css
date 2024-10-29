@@ -1,121 +1,158 @@
-/* En-tête stylisé avec position fixe */
-.header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #4A7C59;
+/* Variables globales */
+:root {
+    --primary-color: #4A7C59;
+    --secondary-color: #3c6246;
+    --background-color: #f8f9fa;
+    --text-color: #2c3e50;
+    --border-radius: 8px;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Style global */
+.stApp {
+    background-color: var(--background-color);
+}
+
+/* Titre principal */
+.main-title {
+    background: linear-gradient(120deg, var(--primary-color), var(--secondary-color));
     color: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
     text-align: center;
-    padding: 0 100px;
-    font-size: clamp(1.2rem, 1.2rem + 1.5vw, 2.5rem);
-    z-index: 100;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 160px;
-    transition: height 0.3s ease; /* Ajout de la transition pour l'effet smooth */
+    box-shadow: var(--shadow);
 }
 
-.header h1 {
-    font-size: clamp(1.5rem, 1.5rem + 0.5vw, 2rem);
+.main-title h1 {
+    font-size: 2.2rem;
     margin: 0;
-    line-height: 1.2;
+    font-weight: 600;
 }
 
-/* Ajustement du conteneur principal */
-.main .block-container {
-    padding-top: 130px;
-    max-width: 1200px;
+/* Titres de section */
+.section-title {
+    border-left: 4px solid var(--primary-color);
     padding-left: 1rem;
-    padding-right: 1rem;
-    color: #333333;
+    margin: 1.5rem 0;
 }
 
-/* Footer stylisé */
-footer {
-    background-color: #222;
-    color: #f9f9f9;
-    text-align: center;
-    padding: 20px 0;
-    margin-top: 30px;
-    border-top: 1px solid #ccc;
-}
-
-footer p {
+.section-title h2 {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    font-weight: 500;
     margin: 0;
 }
 
-footer a {
-    color: #ffcc00;
-    text-decoration: none;
-    transition: color 0.3s ease;
+/* Stylisation des widgets Streamlit */
+.stSelectbox {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
 }
 
-footer a:hover {
-    color: #ff6600;
-    text-decoration: underline;
+.stRadio > label {
+    color: var(--text-color);
+    font-weight: 500;
 }
 
-/* Style des boutons */
-.stButton button {
-    background-color: #4A7C59;
+/* Boutons */
+.stButton > button {
+    background: var(--primary-color);
     color: white;
-    border-radius: 12px;
-    padding: 0.5rem 1rem;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    width: 100%;
+    transition: all 0.3s ease;
 }
 
-.stButton button:hover {
-    background-color: #3c6246;
-    transform: translateY(-2px);  /* Ajout d'un effet de translation au survol */
-    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
+.stButton > button:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
 }
 
-/* ---------------- Responsive Design ---------------- */
+/* File uploader */
+.uploadedFile {
+    background-color: white;
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    box-shadow: var(--shadow);
+}
 
-/* Ajustement pour petits écrans (moins de 768px) */
+/* Expander */
+.streamlit-expanderHeader {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 0.75rem 1rem;
+}
+
+/* Métriques */
+.stMetric {
+    background-color: white;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.stMetric label {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* Images */
+img {
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
-    .header {
-        height: 120px;
-        padding: 0 50px;
+    .main-title h1 {
+        font-size: 1.8rem;
     }
-
-    .header h1 {
-        font-size: 1.5rem;
+    
+    .section-title h2 {
+        font-size: 1.3rem;
     }
-
-    .main .block-container {
-        padding-top: 80px;  /* Réduction de l'espace en haut */
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-    }
-
-    .stButton button {
-        padding: 0.4rem 0.8rem;  /* Réduction des boutons pour petits écrans */
+    
+    .stButton > button {
+        padding: 0.5rem 1rem;
     }
 }
 
-/* Ajustement pour très petits écrans (moins de 480px) */
 @media (max-width: 480px) {
-    .header {
-        height: 100px;  /* Hauteur réduite de l'en-tête pour les très petits écrans */
-        padding: 0 20px;
+    .main-title h1 {
+        font-size: 1.5rem;
+        padding: 1.5rem;
     }
-
-    .header h1 {
-        font-size: 1.2rem;
-    }
-
-    .main .block-container {
-        padding-top: 60px;  /* Réduction encore plus grande pour les petits écrans */
+    
+    .section-title {
         padding-left: 0.5rem;
-        padding-right: 0.5rem;
     }
+    
+    .section-title h2 {
+        font-size: 1.1rem;
+    }
+}
 
-    .stButton button {
-        padding: 0.3rem 0.6rem;  /* Boutons plus petits mais toujours cliquables */
-    }
+/* Spinners et états de chargement */
+.stSpinner > div {
+    border-color: var(--primary-color) !important;
+}
+
+/* Messages d'erreur et d'information */
+.stAlert {
+    border-radius: var(--border-radius);
+}
+
+/* Graphiques */
+.js-plotly-plot {
+    background-color: white;
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    box-shadow: var(--shadow);
 }
