@@ -25,34 +25,66 @@ load_css("utils/styles.css")
 def load_model(model_name):
     return tf.keras.models.load_model(model_name)
 
-# Configuration spécifique pour chaque modèle
 MODEL_CONFIGS = {
     "CNN Maison": {
         "path": 'models/CNNFirstComplet.keras',
         "last_conv_layer": "conv2d_7",
         "input_size": (224, 224),
+        "preprocessing": "simple",
     },
     "Mobilenet1FineTuned": {
         "path": 'models/MobileNetV1_finetuned.keras',
         "last_conv_layer": "conv_pw_13_relu",
         "input_size": (224, 224),
+        "preprocessing": "mobilenet",
     },
     "Mobilenet1Augmented": {
         "path": 'models/MobileNetV1_augmented.keras',
         "last_conv_layer": "conv_pw_13_relu",
         "input_size": (224, 224),
+        "preprocessing": "mobilenet",
     }
 }
 
-def preprocess_image(img, model_choice):
+def preprocess_image(img, model_choice, for_lime=False):
     """Prétraite l'image selon le modèle choisi."""
     img_array = image.img_to_array(img)
     img_array = np.expand_dims(img_array, axis=0)
     
-    if model_choice == "CNN Maison":
+    if MODEL_CONFIGS[model_choice]["preprocessing"] == "simple":
         return img_array / 255.0
     else:  # Pour MobileNet
-        return tf.keras.applications.mobilenet.preprocess_input(img_array)
+        if for_lime:
+            # Pour LIME, on normalise simplement entre 0 et 1
+            return img_array / 255.0
+        else:
+            # Pour la prédiction normale, on utilise le prétraitement MobileNet
+            return tf.keras.applications.mobilenet.preprocess_input(img_array)
+
+def create_lime_predictor(model, model_choice):
+    """Crée une fonction de prédiction adaptée pour LIME."""
+    def predictor(images):
+        # Convertir le batch d'images en float et le normaliser
+        processed_images = []
+        for img in images:
+            # Assurer que l'image est en float et normalisée entre 0 et 1
+            if img.dtype != np.float32:
+                img = img.astype(np.float32)
+            if img.max() > 1.0:
+                img = img / 255.0
+            
+            # Appliquer le prétraitement spécifique au modèle
+            if MODEL_CONFIGS[model_choice]["preprocessing"] == "mobilenet":
+                # Convertir de [0,1] au format attendu par MobileNet
+                img = img * 255.0
+                img = tf.keras.applications.mobilenet.preprocess_input(img)
+            
+            processed_images.append(img)
+        
+        batch = np.stack(processed_images)
+        return model.predict(batch)
+    
+    return predictor
 
 def make_gradcam_heatmap(img_array, model, last_conv_layer_name, pred_index=None, intensity=4):
     """Génère la heatmap Grad-CAM."""
@@ -104,22 +136,31 @@ def overlay_gradcam(img, heatmap, alpha=0.3):
     
     return superimposed_img
 
-def explain_with_lime(img_array, model):
+def explain_with_lime(img_array, model, model_choice):
     """Génère l'explication LIME."""
+    # Créer un prédicteur adapté pour LIME
+    predictor = create_lime_predictor(model, model_choice)
+    
     explainer = lime_image.LimeImageExplainer()
     explanation = explainer.explain_instance(
-        img_array[0],
-        model.predict,
+        img_array[0].astype('double'),  # Assurer que l'image est en double précision
+        predictor,
         top_labels=1,
         hide_color=0,
         num_samples=15
     )
+    
     temp, mask = explanation.get_image_and_mask(
         explanation.top_labels[0],
         positive_only=True,
         num_features=10,
         hide_rest=True
     )
+    
+    # S'assurer que l'image est normalisée entre 0 et 1
+    if temp.max() > 1.0:
+        temp = temp / 255.0
+        
     return mark_boundaries(temp, mask)
 
 def predict_with_model(img, model, model_choice):
@@ -187,11 +228,13 @@ def generate_interpretability(img, model, model_choice, option, predicted_class_
         )
     else:
         with st.spinner('Génération de l\'explication LIME...'):
-            lime_img = explain_with_lime(processed_img, model)
+            processed_img = preprocess_image(img, model_choice, for_lime=True)
+            lime_img = explain_with_lime(processed_img, model, model_choice)
             st.image(
                 lime_img,
                 caption=f'Zones d\'importance LIME : {predicted_class_name}',
-                use_column_width=True
+                use_column_width=True,
+                clamp=True  # Ajouter clamp=True pour éviter l'erreur
             )
 
 def main():
