@@ -10,6 +10,7 @@ from skimage.segmentation import mark_boundaries
 import plotly.graph_objects as go
 import time
 import gc
+import pandas as pd
 from utils.classes import class_names
 
 # Configuration de la page - DOIT ÊTRE EN PREMIER
@@ -237,110 +238,156 @@ def generate_interpretability(img, model, model_choice, option, predicted_class_
                 clamp=True  # Ajouter clamp=True pour éviter l'erreur
             )
 
+def compare_models(img, selected_models, class_names, interpretation_method='Grad-CAM'):
+    """
+    Compare les prédictions de plusieurs modèles sur une même image avec choix de la méthode d'interprétabilité.
+    
+    Args:
+        img: Image PIL à analyser
+        selected_models: Liste des modèles sélectionnés
+        class_names: Liste des noms de classes
+        interpretation_method: 'Grad-CAM' ou 'LIME'
+    """
+    cols = st.columns(len(selected_models))
+    results = {}
+    
+    # Préparer l'image une seule fois
+    img_display = img.resize((224, 224))
+    
+    for idx, model_name in enumerate(selected_models):
+        with cols[idx]:
+            st.markdown(f"##### {model_name}")
+            
+            # Charger le modèle
+            model = load_model(MODEL_CONFIGS[model_name]["path"])
+            
+            # Faire la prédiction
+            predictions, analysis_time = predict_with_model(img_display, model, model_name)
+            pred_index = tf.argmax(predictions[0])
+            confidence = predictions[0][pred_index] * 100
+            
+            # Afficher les métriques
+            st.metric("Classe", class_names[pred_index])
+            st.metric("Confiance", f"{confidence:.1f}%")
+            st.metric("Temps", f"{analysis_time:.3f}s")
+            
+            # Générer la visualisation d'interprétabilité
+            if interpretation_method == 'Grad-CAM':
+                heatmap = make_gradcam_heatmap(
+                    preprocess_image(img_display, model_name),
+                    model,
+                    MODEL_CONFIGS[model_name]["last_conv_layer"],
+                    intensity=3
+                )
+                viz_image = overlay_gradcam(img_display, heatmap, alpha=0.7)
+                st.image(viz_image, caption="Grad-CAM", use_column_width=True)
+            else:  # LIME
+                with st.spinner(f'Génération LIME pour {model_name}...'):
+                    processed_img = preprocess_image(img_display, model_name, for_lime=True)
+                    lime_img = explain_with_lime(processed_img, model, model_name)
+                    st.image(
+                        lime_img,
+                        caption="LIME",
+                        use_column_width=True,
+                        clamp=True
+                    )
+            
+            # Stocker les résultats
+            results[model_name] = {
+                "class": class_names[pred_index],
+                "confidence": confidence,
+                "time": analysis_time
+            }
+    
+    return results
+
 def main():
     # Container principal avec marge
     with st.container():
         # Titre principal
         st.markdown("""
             <div class='main-title'>
-                <h1>Classification d'Image avec Visualisation Interprétable</h1>
+                <h1>Classification d'Image avec Comparaison de Modèles</h1>
             </div>
         """, unsafe_allow_html=True)
 
-        # Création des colonnes
-        col_actions, col_results, col_interpretability = st.columns([1, 2, 2])
-
-        with col_actions:
-            st.markdown("""
-                <div class='section-title'>
-                    <h2>Configuration</h2>
-                </div>
-            """, unsafe_allow_html=True)
+        # Paramètres dans la sidebar
+        with st.sidebar:
+            st.markdown("### 📊 Configuration")
             
-            # Sélection du modèle
-            model_choice = st.selectbox(
-                "📊 Sélection du modèle",
+            # Multi-sélection des modèles
+            selected_models = st.multiselect(
+                "Sélectionner les modèles à comparer",
                 list(MODEL_CONFIGS.keys()),
-                index=1,
-                help="Choisissez le modèle de classification à utiliser"
+                default=["CNN Maison", "Mobilenet1FineTuned"],
+                help="Sélectionnez au moins un modèle"
             )
-
-            # Chargement du modèle
-            model = load_model(MODEL_CONFIGS[model_choice]["path"])
-
+            
             # Sélection de la méthode d'interprétabilité
-            st.markdown("#### 🔍 Méthode d'interprétabilité")
-            option = st.radio(
-                "",
+            interpretation_method = st.radio(
+                "🔍 Méthode d'interprétabilité",
                 ('Grad-CAM', 'LIME'),
-                index=0,
                 help="Choisissez la méthode de visualisation"
             )
-
+            
+            if interpretation_method == 'LIME':
+                st.warning("⚠️ L'analyse LIME peut prendre plus de temps")
+            
+            # Vérification du nombre de modèles sélectionnés
+            if len(selected_models) == 0:
+                st.warning("⚠️ Veuillez sélectionner au moins un modèle")
+            elif len(selected_models) > 3:
+                st.warning("⚠️ Veuillez sélectionner maximum 3 modèles")
+            
             # Upload de l'image
-            st.markdown("#### 📤 Charger une image")
+            st.markdown("### 📤 Image à analyser")
             uploaded_file = st.file_uploader(
                 "",
                 type=["jpg", "jpeg", "png"],
                 help="Formats supportés: JPG, JPEG, PNG"
             )
+            
+            # Paramètres d'image
+            if uploaded_file:
+                st.markdown("### ⚙️ Paramètres d'image")
+                brightness = st.slider("🔆 Luminosité", 0.5, 2.0, 1.0)
+                rotation_angle = st.slider("🔄 Rotation", 0, 360, 0)
+                blur_intensity = st.slider("🌫️ Flou", 0, 5, 0)
 
-        with col_results:
-            if uploaded_file is not None:
-                st.markdown("""
-                    <div class='section-title'>
-                        <h2>Analyse de l'image</h2>
-                    </div>
-                """, unsafe_allow_html=True)
+        # Zone principale
+        if uploaded_file and 0 < len(selected_models) <= 3:
+            # Charger et prétraiter l'image
+            img = Image.open(uploaded_file)
+            
+            # Appliquer les transformations
+            img = ImageEnhance.Brightness(img).enhance(brightness)
+            if blur_intensity > 0:
+                img = img.filter(ImageFilter.GaussianBlur(blur_intensity))
+            if rotation_angle != 0:
+                img = img.rotate(rotation_angle, expand=True)
+            
+            # Afficher l'image originale
+            st.markdown("### 🖼️ Image analysée")
+            st.image(img, caption='Image source', use_column_width=True)
+            
+            # Bouton d'analyse avec indication de la méthode
+            if st.button(f"🚀 Lancer l'analyse comparative ({interpretation_method})", type="primary"):
+                st.markdown("### 📊 Résultats de la comparaison")
                 
-                img = Image.open(uploaded_file)
-                img = img.resize((224, 224))
-
-                # Expander pour les ajustements
-                with st.expander("⚙️ Paramètres d'image"):
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        brightness = st.slider("🔆 Luminosité", 0.5, 2.0, 1.0)
-                        rotation_angle = st.slider("🔄 Rotation", 0, 360, 0)
-                    with col2:
-                        blur_intensity = st.slider("🌫️ Flou", 0, 5, 0)
-
-                    # Appliquer les transformations
-                    img = ImageEnhance.Brightness(img).enhance(brightness)
-                    if blur_intensity > 0:
-                        img = img.filter(ImageFilter.GaussianBlur(blur_intensity))
-                    img = img.rotate(rotation_angle, expand=True)
-                    img = img.resize((224, 224))
-
-                st.image(img, caption='Image à analyser', use_column_width=True)
+                with st.spinner(f'Analyse comparative avec {interpretation_method} en cours...'):
+                    # Lancer la comparaison des modèles avec la méthode sélectionnée
+                    results = compare_models(img, selected_models, class_names, interpretation_method)
                 
-                if st.button("🚀 Lancer l'analyse", key='launch_prediction'):
-                    with st.spinner('Analyse en cours...'):
-                        # Prédiction
-                        predictions, analysis_time = predict_with_model(
-                            img, model, model_choice
-                        )
-                        
-                        # Affichage des résultats
-                        predicted_class_name = display_results(
-                            predictions, analysis_time, class_names
-                        )
-
-        # Colonne d'interprétabilité
-        with col_interpretability:
-            if uploaded_file is not None and 'predicted_class_name' in locals():
-                st.markdown("""
-                    <div class='section-title'>
-                        <h2>Visualisation</h2>
-                    </div>
-                """, unsafe_allow_html=True)
-                
-                generate_interpretability(
-                    img, model, model_choice, option, predicted_class_name
+                # Afficher un tableau récapitulatif
+                st.markdown("### 📋 Récapitulatif")
+                df_results = pd.DataFrame.from_dict(results, orient='index')
+                st.dataframe(
+                    df_results.style.format({
+                        'confidence': '{:.1f}%',
+                        'time': '{:.3f}s'
+                    }),
+                    use_container_width=True
                 )
-
-    # Nettoyage de la mémoire
-    gc.collect()
 
 if __name__ == "__main__":
     main()
