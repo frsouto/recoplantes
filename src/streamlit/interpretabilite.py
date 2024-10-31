@@ -12,6 +12,7 @@ import time
 import gc
 import pandas as pd
 from utils.classes import class_names
+from utils.config_loader import load_model_configs
 
 # Configuration de la page - DOIT ÊTRE EN PREMIER
 st.set_page_config(layout="wide", page_title="Classification d'Images IA")
@@ -26,26 +27,8 @@ load_css("utils/styles.css")
 def load_model(model_name):
     return tf.keras.models.load_model(model_name)
 
-MODEL_CONFIGS = {
-    "CNN Maison": {
-        "path": 'models/CNNFirstComplet.keras',
-        "last_conv_layer": "conv2d_7",
-        "input_size": (224, 224),
-        "preprocessing": "simple",
-    },
-    "Mobilenet1FineTuned": {
-        "path": 'models/MobileNetV1_finetuned.keras',
-        "last_conv_layer": "conv_pw_13_relu",
-        "input_size": (224, 224),
-        "preprocessing": "mobilenet",
-    },
-    "Mobilenet1Augmented": {
-        "path": 'models/MobileNetV1_augmented.keras',
-        "last_conv_layer": "conv_pw_13_relu",
-        "input_size": (224, 224),
-        "preprocessing": "mobilenet",
-    }
-}
+
+MODEL_CONFIGS = load_model_configs("utils/model_configs.json")
 
 def preprocess_image(img, model_choice, for_lime=False):
     """Prétraite l'image selon le modèle choisi."""
