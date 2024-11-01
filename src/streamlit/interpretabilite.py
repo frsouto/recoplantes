@@ -3,13 +3,13 @@
 import streamlit as st
 import numpy as np
 from PIL import Image, ImageEnhance, ImageFilter
-import plotly.graph_objects as go
 import time
 import pandas as pd
 from utils.classes import class_names
 from utils.config_loader import load_model_configs
 from components.image_processing import preprocess_image, make_gradcam_heatmap, overlay_gradcam, explain_with_lime
 from components.model_utils import load_model
+from components.results_display import display_results, display_interpretability
 
 # Configuration de la page - DOIT ÊTRE EN PREMIER
 st.set_page_config(layout="wide", page_title="Classification d'Images IA")
@@ -34,71 +34,6 @@ def predict_with_model(img, model, model_choice):
     end_time = time.time()
     
     return predictions, end_time - start_time
-
-def display_results(predictions, analysis_time, class_names):
-    """Affiche les résultats de la prédiction."""
-    predicted_class_index = np.argmax(predictions[0])
-    predicted_class_name = class_names[predicted_class_index]
-    
-    metric1, metric2 = st.columns(2)
-    with metric1:
-        st.metric("Classe prédite", predicted_class_name)
-    with metric2:
-        st.metric("Temps d'analyse", f"{analysis_time:.2f}s")
-    
-    st.markdown("#### 📊 Top 5 des prédictions")
-    top_5_indices = np.argsort(predictions[0])[-5:][::-1]
-    
-    fig = go.Figure(go.Bar(
-        x=[predictions[0][i] * 100 for i in top_5_indices],
-        y=[class_names[i] for i in top_5_indices],
-        orientation='h',
-        marker=dict(
-            color='rgba(74, 124, 89, 0.8)',
-            line=dict(color='rgba(74, 124, 89, 1.0)', width=2)
-        )
-    ))
-    
-    fig.update_layout(
-        title=dict(text="Probabilités de classification", x=0.5, xanchor='center'),
-        xaxis_title="Probabilité (%)",
-        yaxis=dict(autorange="reversed"),
-        height=300,
-        margin=dict(l=20, r=20, t=40, b=20),
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-    )
-    
-    st.plotly_chart(fig, use_container_width=True)
-    return predicted_class_name
-
-def generate_interpretability(img, model, model_choice, option, predicted_class_name):
-    """Génère la visualisation d'interprétabilité selon la méthode choisie."""
-    processed_img = preprocess_image(img, model_choice, model_configs=MODEL_CONFIGS)
-    
-    if option == 'Grad-CAM':
-        heatmap = make_gradcam_heatmap(
-            processed_img,
-            model,
-            MODEL_CONFIGS[model_choice]["last_conv_layer"],
-            intensity=3
-        )
-        gradcam_image = overlay_gradcam(img, heatmap, alpha=0.7)
-        st.image(
-            gradcam_image,
-            caption=f'Carte de chaleur Grad-CAM : {predicted_class_name}',
-            use_column_width=True
-        )
-    else:
-        with st.spinner('Génération de l\'explication LIME...'):
-            processed_img = preprocess_image(img, model_choice, for_lime=True, model_configs=MODEL_CONFIGS)
-            lime_img = explain_with_lime(processed_img, model, model_choice, model_configs=MODEL_CONFIGS)
-            st.image(
-                lime_img,
-                caption=f'Zones d\'importance LIME : {predicted_class_name}',
-                use_column_width=True,
-                clamp=True  # Ajouter clamp=True pour éviter l'erreur
-            )
 
 def compare_models(img, selected_models, class_names, interpretation_method='Grad-CAM'):
     """
@@ -134,25 +69,18 @@ def compare_models(img, selected_models, class_names, interpretation_method='Gra
             st.metric("Temps", f"{analysis_time:.3f}s")
             
             # Générer la visualisation d'interprétabilité
-            if interpretation_method == 'Grad-CAM':
-                heatmap = make_gradcam_heatmap(
-                    preprocess_image(img_display, model_name, model_configs=MODEL_CONFIGS),
-                    model,
-                    MODEL_CONFIGS[model_name]["last_conv_layer"],
-                    intensity=3
-                )
-                viz_image = overlay_gradcam(img_display, heatmap, alpha=0.7)
-                st.image(viz_image, caption="Grad-CAM", use_column_width=True)
-            else:  # LIME
-                with st.spinner(f'Génération LIME pour {model_name}...'):
-                    processed_img = preprocess_image(img_display, model_name, for_lime=True, model_configs=MODEL_CONFIGS)
-                    lime_img = explain_with_lime(processed_img, model, model_name, model_configs=MODEL_CONFIGS)
-                    st.image(
-                        lime_img,
-                        caption="LIME",
-                        use_column_width=True,
-                        clamp=True
-                    )
+            display_interpretability(
+                interpretation_method,
+                img_display,
+                model,
+                model_name,
+                class_names[pred_index],
+                preprocess_image,
+                make_gradcam_heatmap,
+                overlay_gradcam,
+                explain_with_lime,
+                MODEL_CONFIGS
+            )
             
             # Stocker les résultats
             results[model_name] = {
