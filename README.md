@@ -44,12 +44,21 @@ Project Organization
 Instructions for launching the Streamlit app
 --------
 
+```bash
+# Clone the repository
 git clone https://github.com/DataScientest-Studio/fev24_cds_plants.git
+
+# Create and activate the virtual environment
 python3 -m venv plantes
 source plantes/bin/activate
+
+# Install dependencies
 cd fev24_cds_plants
 pip install -r requirements.txt
+
+# Launch the Streamlit application
 cd src/streamlit
 streamlit run interpretabilite.py
+
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
