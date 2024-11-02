@@ -56,7 +56,7 @@ def display_interpretability(option, img, model, model_choice, predicted_class_n
         st.image(
             gradcam_image,
             caption=f'Carte de chaleur Grad-CAM : {predicted_class_name}',
-            use_column_width=True
+            width=350
         )
     else:
         with st.spinner('Génération de l\'explication LIME...'):
@@ -65,6 +65,6 @@ def display_interpretability(option, img, model, model_choice, predicted_class_n
             st.image(
                 lime_img,
                 caption=f'Zones d\'importance LIME : {predicted_class_name}',
-                use_column_width=True,
+                width=350,
                 clamp=True  # Ajouter clamp=True pour éviter l'erreur
             )

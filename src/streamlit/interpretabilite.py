@@ -35,59 +35,64 @@ def predict_with_model(img, model, model_choice):
     
     return predictions, end_time - start_time
 
-def compare_models(img, selected_models, class_names, interpretation_method='Grad-CAM'):
+def display_image_and_results_container():
+    """Crée et retourne les conteneurs pour l'image et les résultats."""
+    # Créer une mise en page avec deux colonnes principales
+    main_cols = st.columns([1, 3])
+    return main_cols[0], main_cols[1]
+
+def compare_models(results_container, img, selected_models, class_names, interpretation_method='Grad-CAM'):
     """
     Compare les prédictions de plusieurs modèles sur une même image avec choix de la méthode d'interprétabilité.
-    
-    Args:
-        img: Image PIL à analyser
-        selected_models: Liste des modèles sélectionnés
-        class_names: Liste des noms de classes
-        interpretation_method: 'Grad-CAM' ou 'LIME'
     """
-    cols = st.columns(len(selected_models))
     results = {}
     
     # Préparer l'image une seule fois
     img_display = img.resize((224, 224))
     
-    for idx, model_name in enumerate(selected_models):
-        with cols[idx]:
-            st.markdown(f"##### {model_name}")
-            
-            # Charger le modèle
-            model = cached_load_model(MODEL_CONFIGS[model_name]["path"])
-            
-            # Faire la prédiction
-            predictions, analysis_time = predict_with_model(img_display, model, model_name)
-            pred_index = np.argmax(predictions[0])
-            confidence = predictions[0][pred_index] * 100
-            
-            # Afficher les métriques
-            st.metric("Classe", class_names[pred_index])
-            st.metric("Confiance", f"{confidence:.1f}%")
-            st.metric("Temps", f"{analysis_time:.3f}s")
-            
-            # Générer la visualisation d'interprétabilité
-            display_interpretability(
-                interpretation_method,
-                img_display,
-                model,
-                model_name,
-                class_names[pred_index],
-                preprocess_image,
-                make_gradcam_heatmap,
-                overlay_gradcam,
-                explain_with_lime,
-                MODEL_CONFIGS
-            )
-            
-            # Stocker les résultats
-            results[model_name] = {
-                "class": class_names[pred_index],
-                "confidence": confidence,
-                "time": analysis_time
-            }
+    with results_container:
+        st.markdown("### 📊 Résultats de l'analyse")
+        
+        # Créer des colonnes pour chaque modèle
+        model_cols = st.columns(len(selected_models))
+        
+        for idx, model_name in enumerate(selected_models):
+            with model_cols[idx]:
+                st.markdown(f"##### {model_name}")
+                
+                # Charger le modèle
+                model = cached_load_model(MODEL_CONFIGS[model_name]["path"])
+                
+                # Faire la prédiction
+                predictions, analysis_time = predict_with_model(img_display, model, model_name)
+                pred_index = np.argmax(predictions[0])
+                confidence = predictions[0][pred_index] * 100
+                
+                # Afficher les métriques
+                st.metric("Classe", class_names[pred_index])
+                st.metric("Confiance", f"{confidence:.1f}%")
+                st.metric("Temps", f"{analysis_time:.3f}s")
+                
+                # Générer la visualisation d'interprétabilité
+                display_interpretability(
+                    interpretation_method,
+                    img_display,
+                    model,
+                    model_name,
+                    class_names[pred_index],
+                    preprocess_image,
+                    make_gradcam_heatmap,
+                    overlay_gradcam,
+                    explain_with_lime,
+                    MODEL_CONFIGS
+                )
+                
+                # Stocker les résultats
+                results[model_name] = {
+                    "class": class_names[pred_index],
+                    "confidence": confidence,
+                    "time": analysis_time
+                }
     
     return results
 
@@ -144,6 +149,9 @@ def main():
                 rotation_angle = st.slider("🔄 Rotation", 0, 360, 0)
                 blur_intensity = st.slider("🌫️ Flou", 0, 5, 0)
 
+        # Créer les conteneurs pour l'image et les résultats
+        image_container, results_container = display_image_and_results_container()
+
         # Zone principale
         if uploaded_file and 0 < len(selected_models) <= 3:
             # Charger et prétraiter l'image
@@ -156,28 +164,28 @@ def main():
             if rotation_angle != 0:
                 img = img.rotate(rotation_angle, expand=True)
             
-            # Afficher l'image originale
-            st.markdown("### 🖼️ Image analysée")
-            st.image(img, caption='Image source', use_column_width=True)
+            # Afficher immédiatement l'image dans le conteneur de gauche
+            with image_container:
+                st.markdown("### 🖼️ Image source")
+                st.image(img, width=350)
             
             # Bouton d'analyse avec indication de la méthode
             if st.button(f"🚀 Lancer l'analyse comparative ({interpretation_method})", type="primary"):
-                st.markdown("### 📊 Résultats de la comparaison")
-                
                 with st.spinner(f'Analyse comparative avec {interpretation_method} en cours...'):
                     # Lancer la comparaison des modèles avec la méthode sélectionnée
-                    results = compare_models(img, selected_models, class_names, interpretation_method)
+                    results = compare_models(results_container, img, selected_models, class_names, interpretation_method)
                 
                 # Afficher un tableau récapitulatif
-                st.markdown("### 📋 Récapitulatif")
-                df_results = pd.DataFrame.from_dict(results, orient='index')
-                st.dataframe(
-                    df_results.style.format({
-                        'confidence': '{:.1f}%',
-                        'time': '{:.3f}s'
-                    }),
-                    use_container_width=True
-                )
+                with results_container:
+                    st.markdown("### 📋 Récapitulatif")
+                    df_results = pd.DataFrame.from_dict(results, orient='index')
+                    st.dataframe(
+                        df_results.style.format({
+                            'confidence': '{:.1f}%',
+                            'time': '{:.3f}s'
+                        }),
+                        use_container_width=True
+                    )
 
 if __name__ == "__main__":
     main()
