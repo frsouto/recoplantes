@@ -56,7 +56,7 @@ streamlit run app.py
 
 ## Auteurs
 
-Développé par la promotion Février 2024 de DataScientest.
+Développé par Felipe Souto / Nicolas Papegaey (promotion Février 2024 du cursus Data Scientist).
 
 ## Licence
 
