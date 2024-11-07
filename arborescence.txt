@@ -2,61 +2,196 @@
 ├── arborescence.txt
 ├── LICENSE
 ├── models
-│   └── CNNFirstComplet.keras
+│   └── CNNFirstComplet.keras
 ├── notebooks
-│   ├── 01_exploration
-│   │   ├── 01_exploration_metriques_outliers_visualisation.ipynb
-│   │   ├── 02_exploration_structuration_dataframe_images.ipynb
-│   │   ├── 03_exploration_plantvillage_images_classes.ipynb
-│   │   ├── 04_evaluation_qualite_images_metriques.ipynb
-│   │   └── 05_exploration_images.ipynb
-│   ├── 02_preparation
-│   │   ├── felipe_analyse_doublons_plantdisease_v0.1.ipynb
-│   │   ├── felipe_deplacement_fichiers_plantvillage_v0.2.ipynb
-│   │   ├── files_to_delete.csv
-│   │   └── nicolas_suppression_fichiers_plantvillage_v0.1.ipynb
-│   ├── 03_modelisation
-│   │   ├── 2024-07-11_CNN_training_v1_initial.ipynb
-│   │   ├── 2024-07-16_CNN_training_v2_e20.ipynb
-│   │   ├── 2024-07-17_CNN_training_v3_e20.ipynb
-│   │   ├── 2024-07-22_VGG16_training_v1_e20.ipynb
-│   │   ├── 2024-07-23_MobileNetV1_finetuning_v1_e10.ipynb
-│   │   ├── 2024-07-23_ResNet50_training_v1_e20.ipynb
-│   │   ├── 2024-07-25_MobileNetV2_training_v1_e20.ipynb
-│   │   ├── 2024-08-01_MobileNetV1_training_v1_e20.ipynb
-│   │   ├── 2024-08-26_MobileNetV1_training_v1_e20_analysis.ipynb
-│   │   ├── 2024-08-26_MobileNetV1_training_v2_e20_analysis.ipynb
-│   │   ├── 2024-09-12_NasNetV1_training_v1_e20_analysis.ipynb
-│   │   ├── 2024-09-17_CNNFirst_training_v1_e20_analysis.ipynb
-│   │   ├── 2024-09-22_MobileNetV1_training_v2_e20_analysis.ipynb
-│   │   ├── 2024-09-26_MobileNetV1_training_v3_e20_dropout0.6_lr0.00005_gel_segmentation_analysis.ipynb
-│   │   ├── 2024-09-26_MobileNetV1_training_v3_e20_dropout0.6_lr0.00005_segmentation_analysis.ipynb
-│   │   ├── 2024-09-26_MobileNetV1_training_v3_e20_dropout0.6_segmentation_analysis.ipynb
-│   │   ├── 2024-09-26_MobileNetV1_training_v3_e20_segmentation_analysis.ipynb
-│   │   └── 2024-09-30_ResNet50_training_v1_e20_segmentation_analysis.ipynb
-│   ├── archives
-│   └── Readme.md
+│   ├── 01_exploration
+│   │   ├── 01_exploration_metriques_outliers_visualisation.ipynb
+│   │   ├── 02_exploration_structuration_dataframe_images.ipynb
+│   │   ├── 03_exploration_plantvillage_images_classes.ipynb
+│   │   ├── 04_evaluation_qualite_images_metriques.ipynb
+│   │   └── 05_exploration_images.ipynb
+│   ├── 02_preparation
+│   │   ├── felipe_analyse_doublons_plantdisease_v0.1.ipynb
+│   │   ├── felipe_deplacement_fichiers_plantvillage_v0.2.ipynb
+│   │   ├── files_to_delete.csv
+│   │   └── nicolas_suppression_fichiers_plantvillage_v0.1.ipynb
+│   ├── 03_modelisation
+│   │   ├── 2024-07-11_CNN_training_v1_initial.ipynb
+│   │   ├── 2024-07-16_CNN_training_v2_e20.ipynb
+│   │   ├── 2024-07-17_CNN_training_v3_e20.ipynb
+│   │   ├── 2024-07-22_VGG16_training_v1_e20.ipynb
+│   │   ├── 2024-07-23_MobileNetV1_finetuning_v1_e10.ipynb
+│   │   ├── 2024-07-23_ResNet50_training_v1_e20.ipynb
+│   │   ├── 2024-07-25_MobileNetV2_training_v1_e20.ipynb
+│   │   ├── 2024-08-01_MobileNetV1_training_v1_e20.ipynb
+│   │   ├── 2024-08-26_MobileNetV1_training_v1_e20_analysis.ipynb
+│   │   ├── 2024-08-26_MobileNetV1_training_v2_e20_analysis.ipynb
+│   │   ├── 2024-09-12_NasNetV1_training_v1_e20_analysis.ipynb
+│   │   ├── 2024-09-17_CNNFirst_training_v1_e20_analysis.ipynb
+│   │   ├── 2024-09-22_MobileNetV1_training_v2_e20_analysis.ipynb
+│   │   ├── 2024-09-26_MobileNetV1_training_v3_e20_dropout0.6_lr0.00005_gel_segmentation_analysis.ipynb
+│   │   ├── 2024-09-26_MobileNetV1_training_v3_e20_dropout0.6_lr0.00005_segmentation_analysis.ipynb
+│   │   ├── 2024-09-26_MobileNetV1_training_v3_e20_dropout0.6_segmentation_analysis.ipynb
+│   │   ├── 2024-09-26_MobileNetV1_training_v3_e20_segmentation_analysis.ipynb
+│   │   ├── 2024-09-30_ResNet50_training_v1_e20_segmentation_analysis.ipynb
+│   │   ├── 2024-10-23_MobileNetV1_training_v2_e20_analysis_augmentation_data_epoch.ipynb
+│   │   ├── 2024-10-25_MobileNetV1_training_v3_e40_finetuned_analysis.ipynb
+│   │   └── 2024-10-27_MobileNetV1_training_v3_e40_augmented_finetuned_analysis.ipynb
+│   └── Readme.md
 ├── README.md
 ├── references
 ├── reports
-│   └── figures
-│       └── ComparaisonPerformances.png
+│   ├── dataset_plantdisease.csv
+│   ├── fev24cds_plants_exploration_v1.0.pdf
+│   ├── fev24cds_plants_modelisation_v1.0.pdf
+│   ├── figures
+│   │   ├── boxplots
+│   │   │   ├── brightness.png
+│   │   │   ├── contrast.png
+│   │   │   ├── densite.png
+│   │   │   ├── entropy.png
+│   │   │   ├── noise.png
+│   │   │   ├── pourcentage_vert.png
+│   │   │   ├── ratiozoom.png
+│   │   │   ├── saturation.png
+│   │   │   ├── sharpness.png
+│   │   │   ├── snr.png
+│   │   │   └── sobel.png
+│   │   ├── ComparaisonPerformances.png
+│   │   └── histographs
+│   │       ├── brightness.png
+│   │       ├── contrast.png
+│   │       ├── densite.png
+│   │       ├── entropy.png
+│   │       ├── noise.png
+│   │       ├── pourcentage_vert.png
+│   │       ├── ratiozoom.png
+│   │       ├── saturation.png
+│   │       ├── sharpness.png
+│   │       ├── snr.png
+│   │       └── sobel.png
+│   ├── metriques2.csv
+│   └── metriques.csv
 ├── requirements.txt
 └── src
     ├── features
-    │   ├── build_features.py
-    │   └── __init__.py
+    │   ├── build_features.py
+    │   └── __init__.py
     ├── __init__.py
     ├── models
-    │   ├── __init__.py
-    │   ├── predict_model.py
-    │   └── train_model.py
+    │   ├── __init__.py
+    │   ├── predict_model.py
+    │   └── train_model.py
     ├── streamlit
-    │   ├── app.py
-    │   └── interpretabilite.py
+    │   ├── app.py
+    │   ├── components
+    │   │   ├── image_processing.py
+    │   │   ├── model_utils.py
+    │   │   ├── __pycache__
+    │   │   │   ├── image_processing.cpython-312.pyc
+    │   │   │   ├── model_utils.cpython-312.pyc
+    │   │   │   ├── results_display.cpython-312.pyc
+    │   │   │   └── temporal_analysis.cpython-312.pyc
+    │   │   └── results_display.py
+    │   ├── gallery
+    │   │   ├── Apple___Apple_scab_Apple___healthy_78_gradcam.jpg
+    │   │   ├── Apple___Apple_scab_Apple___healthy_78.jpg
+    │   │   ├── Apple___Apple_scab_Apple___healthy_78_lime.jpg
+    │   │   ├── ClasseMajoritaire_Orange_CitrusGreening.JPG
+    │   │   ├── ClasseMajoritaire_Tomato_Yellow_LeafCurlVirus.JPG
+    │   │   ├── ClasseMinoritaire_Apple_Cedar_applerust.JPG
+    │   │   ├── ClasseMinoritaire_Potato_Healthy.JPG
+    │   │   ├── Corn_(maize)___Northern_Leaf_Blight_Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot_57gradcam.jpg
+    │   │   ├── Corn_(maize)___Northern_Leaf_Blight_Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot_57.jpg
+    │   │   ├── Corn_(maize)___Northern_Leaf_Blight_Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot_57lime.jpg
+    │   │   ├── histogrammeespeces.png
+    │   │   ├── OutlierMaxBrightness_BlueberryHealthy.jpeg
+    │   │   ├── OutlierMaxContrast_Strawberry_LeafScorch.jpeg
+    │   │   ├── OutlierMaxNoise_Corn_NorthernLeafBlight.jpeg
+    │   │   ├── OutlierMaxSharpness_SoybeanHealthy.jpeg
+    │   │   ├── OutlierMinBrightness_TomatoLateBlight.jpeg
+    │   │   ├── OutlierMinContrast_Orange_Hauglongbing.jpeg
+    │   │   ├── OutlierMinNoise_CornHealthy.jpeg
+    │   │   ├── OutlierMinSharpness_Tomato_Yello_LeafCurlVirs.jpeg
+    │   │   ├── TomatoHealthyGradcam.jpg
+    │   │   ├── TomatoHealthy.JPG
+    │   │   ├── TomatoHealthyLime.jpg
+    │   │   ├── Tomato___Late_blight_Tomato___Early_blightGradcam.jpg
+    │   │   ├── Tomato___Late_blight_Tomato___Early_blight.jpg
+    │   │   └── Tomato___Late_blight_Tomato___Early_blightLime.jpg
+    │   ├── images
+    │   │   ├── ai_diagnosis.webp
+    │   │   ├── brightness_distribution.png
+    │   │   ├── class_distribution.png
+    │   │   ├── CNNBase_ModelAccuracy.png
+    │   │   ├── CNNMobiletNetV1FineTuned_Accuracy.png
+    │   │   ├── contrast_distribution.png
+    │   │   ├── dataset_overview.png
+    │   │   ├── densite_distribution.png
+    │   │   ├── entropy_distribution.png
+    │   │   ├── IMG_5931.jpg
+    │   │   ├── maïs
+    │   │   │   ├── ef36729c-29b1-4f29-b100-d2490a238842___RS_GLSp 4415.JPG
+    │   │   │   ├── f301b26e-ec9c-4d03-94fa-28a2a8fe617a___RS_NLB 4254.JPG
+    │   │   │   ├── fb65bef4-b6c2-49d8-86dd-be1e72bdb43d___R.S_HL 0611 copy.jpg
+    │   │   │   └── RS_Rust 2312.JPG
+    │   │   ├── noise_distribution.png
+    │   │   ├── plantnetwork.webp
+    │   │   ├── pourcentage_vert_distribution.png
+    │   │   ├── ratiozoom_distribution.png
+    │   │   ├── saturation_distribution.png
+    │   │   ├── sharpness_distribution.png
+    │   │   ├── snr_distribution.png
+    │   │   └── sobel_distribution.png
+    │   ├── interpretabilite.py
+    │   ├── models
+    │   │   ├── CNNFirstComplet.keras
+    │   │   ├── MobileNetV1_augmented.keras
+    │   │   └── MobileNetV1_finetuned.keras
+    │   ├── sections
+    │   │   ├── best_model.py
+    │   │   ├── conclusion.py
+    │   │   ├── data_overview.py
+    │   │   ├── demo.py
+    │   │   ├── exploratory_analysis.py
+    │   │   ├── modeling.py
+    │   │   ├── preprocessing.py
+    │   │   ├── presentation.py
+    │   │   └── __pycache__
+    │   │       ├── analyse_donnees.cpython-312.pyc
+    │   │       ├── best_model.cpython-312.pyc
+    │   │       ├── choix_modele_optimisation.cpython-312.pyc
+    │   │       ├── classification_probleme.cpython-312.pyc
+    │   │       ├── cnn_modele_ameliore.cpython-312.pyc
+    │   │       ├── cnn_modele_base.cpython-312.pyc
+    │   │       ├── conclusion.cpython-312.pyc
+    │   │       ├── contexte_motivation.cpython-312.pyc
+    │   │       ├── data_overview.cpython-312.pyc
+    │   │       ├── demo.cpython-312.pyc
+    │   │       ├── demonstration.cpython-312.pyc
+    │   │       ├── exploratory_analysis.cpython-312.pyc
+    │   │       ├── meilleur_modele.cpython-312.pyc
+    │   │       ├── modeling.cpython-312.pyc
+    │   │       ├── modelisation.cpython-312.pyc
+    │   │       ├── preprocessing.cpython-312.pyc
+    │   │       ├── presentation.cpython-312.pyc
+    │   │       ├── presentation_donnees.cpython-312.pyc
+    │   │       ├── presentation_sujet.cpython-312.pyc
+    │   │       └── transfer_learning.cpython-312.pyc
+    │   └── utils
+    │       ├── classes.py
+    │       ├── config_loader.py
+    │       ├── model_configs.json
+    │       ├── __pycache__
+    │       │   ├── classes.cpython-312.pyc
+    │       │   ├── config_loader.cpython-312.pyc
+    │       │   └── storage.cpython-312.pyc
+    │       └── styles.css
     └── visualization
         ├── __init__.py
+        ├── model_architecture.png
+        ├── visualisation_network.ipynb
         ├── visualisation.py
         └── visualize.py
 
-14 directories, 45 files
+25 directories, 169 files
