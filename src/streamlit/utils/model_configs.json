@@ -1,18 +1,18 @@
 {
     "CNN Maison": {
-        "path": "models/CNNFirstComplet.keras",
+        "path": "src/streamlit/models/CNNFirstComplet.keras",
         "last_conv_layer": "conv2d_7",
         "input_size": [224, 224],
         "preprocessing": "simple"
     },
     "Mobilenet1FineTuned": {
-        "path": "models/MobileNetV1_finetuned.keras",
+        "path": "src/streamlit/models/MobileNetV1_finetuned.keras",
         "last_conv_layer": "conv_pw_13_relu",
         "input_size": [224, 224],
         "preprocessing": "mobilenet"
     },
     "Mobilenet1Augmented": {
-        "path": "models/MobileNetV1_augmented.keras",
+        "path": "src/streamlit/models/MobileNetV1_augmented.keras",
         "last_conv_layer": "conv_pw_13_relu",
         "input_size": [224, 224],
         "preprocessing": "mobilenet"
