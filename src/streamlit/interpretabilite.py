@@ -18,13 +18,13 @@ def load_css(file_name):
     with open(file_name) as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-load_css("src/streamlit/utils/styles.css")
+load_css("/mount/src/recoplantes/src/streamlit/utils/styles.css")
 
 @st.cache_resource
 def cached_load_model(model_name):
     return load_model(model_name)
 
-MODEL_CONFIGS = load_model_configs("src/streamlit/utils/model_configs.json")
+MODEL_CONFIGS = load_model_configs("/mount/src/recoplantes/src/streamlit/utils/model_configs.json")
 
 def predict_with_model(img, model, model_choice):
     """Effectue la prédiction avec le modèle spécifié."""
